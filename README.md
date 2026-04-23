@@ -1,5 +1,7 @@
 # clocktui-rs - A TUI clock
 
+<img width="753" height="539" alt="image" src="https://github.com/user-attachments/assets/6492daa3-7aea-46de-9834-8116d4befe67" />
+
 ## Run
 
 A `bin` folder must exist in `$HOME` and be in `$PATH`.
@@ -57,7 +59,3 @@ clocktui --theme dark
 
 - [x] Update README to add build/install instructions
 - [ ] Config for each `clock` individually
-
-## Preview
-
-<img width="753" height="539" alt="image" src="https://github.com/user-attachments/assets/6492daa3-7aea-46de-9834-8116d4befe67" />
