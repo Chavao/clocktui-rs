@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 use ratatui::layout::{Alignment, Constraint, Direction, Layout, Rect};
-use ratatui::prelude::{Color, Frame, Line, Span, Style};
+use ratatui::prelude::{Frame, Line, Span, Style};
 use ratatui::widgets::{Block, BorderType, Borders, Clear, Paragraph};
 
 use crate::app::ClockApp;
@@ -14,7 +14,7 @@ impl ClockApp {
         let clock_lines = render_big_clock(&primary_now.format("%H:%M:%S").to_string());
 
         frame.render_widget(
-            Block::default().style(Style::default().bg(Color::Rgb(7, 10, 16))),
+            Block::default().style(Style::default().bg(self.theme.app_background)),
             area,
         );
 
@@ -46,12 +46,12 @@ impl ClockApp {
             Block::default()
                 .borders(Borders::ALL)
                 .border_type(BorderType::Rounded)
-                .border_style(Style::default().fg(Color::Rgb(80, 180, 220)))
+                .border_style(Style::default().fg(self.theme.clock_panel_border))
                 .title(Span::styled(
                     format!(" {} ", self.config.primary_zone),
-                    Style::default().fg(Color::Rgb(190, 240, 255)),
+                    Style::default().fg(self.theme.clock_title),
                 ))
-                .style(Style::default().bg(Color::Rgb(10, 14, 24))),
+                .style(Style::default().bg(self.theme.clock_panel_background)),
             area,
         );
 
@@ -74,18 +74,8 @@ impl ClockApp {
                 .collect::<Vec<_>>(),
         )
         .alignment(Alignment::Center)
-        .style(Style::default().fg(Color::Rgb(24, 34, 44)));
+        .style(Style::default().fg(self.theme.clock_shadow));
         frame.render_widget(shadow, shadow_area);
-
-        let colors = [
-            Color::Rgb(247, 247, 250),
-            Color::Rgb(245, 246, 252),
-            Color::Rgb(231, 238, 252),
-            Color::Rgb(218, 232, 252),
-            Color::Rgb(202, 223, 252),
-            Color::Rgb(183, 209, 252),
-            Color::Rgb(167, 197, 248),
-        ];
 
         let rendered = lines
             .iter()
@@ -93,7 +83,7 @@ impl ClockApp {
             .map(|(idx, line)| {
                 Line::from(vec![Span::styled(
                     line.clone(),
-                    Style::default().fg(colors[idx.min(colors.len() - 1)]),
+                    Style::default().fg(self.theme.clock_digit_color(idx)),
                 )])
             })
             .collect::<Vec<_>>();
@@ -120,14 +110,14 @@ impl ClockApp {
             let local = now.with_timezone(&zone.tz);
             let clock = local.format("%H:%M").to_string();
             let offset = local.format("%:z").to_string();
-            let accent = zone_accent(index);
+            let accent = self.theme.timezone_accent_color(index);
 
             frame.render_widget(
                 Block::default()
                     .borders(Borders::ALL)
                     .border_type(BorderType::Rounded)
                     .border_style(Style::default().fg(accent))
-                    .style(Style::default().bg(Color::Rgb(18, 26, 36))),
+                    .style(Style::default().bg(self.theme.timezone_panel_background)),
                 *chunk,
             );
 
@@ -136,15 +126,15 @@ impl ClockApp {
                 Paragraph::new(vec![
                     Line::from(Span::styled(
                         zone.label.as_str(),
-                        Style::default().fg(Color::Rgb(220, 228, 236)),
+                        Style::default().fg(self.theme.timezone_label),
                     )),
                     Line::from(Span::styled(
                         clock,
-                        Style::default().fg(Color::Rgb(255, 255, 255)),
+                        Style::default().fg(self.theme.timezone_time),
                     )),
                     Line::from(Span::styled(
                         offset,
-                        Style::default().fg(Color::Rgb(148, 171, 190)),
+                        Style::default().fg(self.theme.timezone_offset),
                     )),
                 ])
                 .alignment(Alignment::Center),
@@ -156,13 +146,13 @@ impl ClockApp {
     fn render_quit_modal(&self, frame: &mut Frame<'_>, area: Rect) {
         let modal = centered_rect(46, 7, area);
         let no = if self.select_yes {
-            Span::styled(" No ", Style::default().fg(Color::Rgb(205, 213, 223)))
+            Span::styled(" No ", Style::default().fg(self.theme.modal_option_default))
         } else {
             Span::styled(
                 " No ",
                 Style::default()
-                    .fg(Color::Black)
-                    .bg(Color::Rgb(124, 234, 255)),
+                    .fg(self.theme.modal_option_selected_foreground)
+                    .bg(self.theme.modal_option_selected_background),
             )
         };
 
@@ -170,11 +160,14 @@ impl ClockApp {
             Span::styled(
                 " Yes ",
                 Style::default()
-                    .fg(Color::Black)
-                    .bg(Color::Rgb(124, 234, 255)),
+                    .fg(self.theme.modal_option_selected_foreground)
+                    .bg(self.theme.modal_option_selected_background),
             )
         } else {
-            Span::styled(" Yes ", Style::default().fg(Color::Rgb(205, 213, 223)))
+            Span::styled(
+                " Yes ",
+                Style::default().fg(self.theme.modal_option_default),
+            )
         };
 
         frame.render_widget(Clear, modal);
@@ -182,11 +175,11 @@ impl ClockApp {
             Block::default()
                 .borders(Borders::ALL)
                 .border_type(BorderType::Rounded)
-                .border_style(Style::default().fg(Color::Rgb(124, 234, 255)))
-                .style(Style::default().bg(Color::Rgb(12, 18, 30)))
+                .border_style(Style::default().fg(self.theme.modal_panel_border))
+                .style(Style::default().bg(self.theme.modal_panel_background))
                 .title(Span::styled(
                     " Confirm Exit ",
-                    Style::default().fg(Color::Rgb(200, 242, 255)),
+                    Style::default().fg(self.theme.modal_title),
                 )),
             modal,
         );
@@ -196,12 +189,12 @@ impl ClockApp {
             Paragraph::new(vec![
                 Line::from(Span::styled(
                     "Do you want to exit?",
-                    Style::default().fg(Color::Rgb(232, 238, 244)),
+                    Style::default().fg(self.theme.modal_question),
                 )),
                 Line::from(vec![Span::raw(" "), no, Span::raw("  "), yes]),
                 Line::from(Span::styled(
                     "Use left/right and Enter",
-                    Style::default().fg(Color::Rgb(142, 168, 186)),
+                    Style::default().fg(self.theme.modal_hint),
                 )),
             ])
             .alignment(Alignment::Center),
@@ -242,15 +235,4 @@ fn center_vertical(area: Rect, content_height: u16) -> Rect {
         width: area.width,
         height: content_height,
     }
-}
-
-fn zone_accent(index: usize) -> Color {
-    let accents = [
-        Color::Rgb(122, 210, 255),
-        Color::Rgb(145, 225, 209),
-        Color::Rgb(255, 199, 122),
-        Color::Rgb(202, 186, 255),
-        Color::Rgb(255, 148, 171),
-    ];
-    accents[index % accents.len()]
 }

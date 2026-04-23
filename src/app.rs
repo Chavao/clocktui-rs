@@ -8,6 +8,7 @@ use ratatui::Terminal;
 use ratatui::prelude::Backend;
 
 use crate::config::{Config, TimezoneSpec};
+use crate::theme::Theme;
 
 #[derive(Clone, Debug)]
 pub struct ZoneClock {
@@ -18,6 +19,7 @@ pub struct ZoneClock {
 #[derive(Debug)]
 pub struct ClockApp {
     pub(crate) config: Config,
+    pub(crate) theme: Theme,
     pub(crate) primary_tz: Tz,
     pub(crate) zones: Vec<ZoneClock>,
     pub(crate) show_quit: bool,
@@ -37,6 +39,7 @@ impl ClockApp {
             .primary_zone
             .parse()
             .map_err(|_| format!("Invalid primary timezone: {}", config.primary_zone))?;
+        let theme = crate::theme::load(&config.theme_name)?;
 
         let zones = config
             .timezones
@@ -46,6 +49,7 @@ impl ClockApp {
 
         Ok(Self {
             config,
+            theme,
             primary_tz,
             zones,
             show_quit: false,
