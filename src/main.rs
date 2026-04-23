@@ -16,7 +16,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Err("This app requires an interactive terminal (TTY)".into());
     }
 
-    let mut app = ClockApp::new(config::from_env())?;
+    let mut app = ClockApp::new(config::from_env()?)?;
     let mut terminal = init_terminal()?;
     let run_result = app.run(&mut terminal);
     restore_terminal(&mut terminal)?;
