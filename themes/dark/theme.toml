@@ -1,0 +1,40 @@
+[app]
+background = "#000000"
+
+[clock]
+panel_background = "#010409"
+panel_border = "#30363D"
+title = "#F0F6FC"
+shadow = "#000000"
+digits = [
+  "#F0F6FC",
+  "#C9D1D9",
+  "#B1BAC4",
+  "#94A3B1",
+  "#7D8590",
+  "#6E7681",
+  "#484F58",
+]
+
+[timezones]
+panel_background = "#0D1117"
+accents = [
+  "#262B31",
+  "#2C323A",
+  "#30363D",
+  "#353C44",
+  "#3B434C",
+]
+label = "#C9D1D9"
+time = "#F0F6FC"
+offset = "#6E7681"
+
+[modal]
+panel_background = "#010409"
+panel_border = "#30363D"
+title = "#F0F6FC"
+question = "#C9D1D9"
+hint = "#7D8590"
+option_default = "#B1BAC4"
+option_selected_foreground = "#F0F6FC"
+option_selected_background = "#21262D"
