@@ -1,2 +1,12 @@
+primary_timezone = "America/Sao_Paulo"
+
+timezones = [
+  "America/Los_Angeles",
+  "America/Denver",
+  "America/Chicago",
+  "America/New_York",
+  "America/Sao_Paulo",
+]
+
 [theme]
 theme = "default"

@@ -17,6 +17,45 @@ $ make build
 $ ./target/release/clocktui
 ```
 
+## Timezones configuration
+
+Timezone settings are loaded from:
+
+`$HOME/.config/clocktui/config.toml`
+
+Example:
+
+```toml
+primary_timezone = "America/Sao_Paulo"
+
+timezones = [
+  "America/Los_Angeles",
+  "America/Denver",
+  "America/Chicago",
+  "America/New_York",
+  "America/Sao_Paulo",
+]
+
+[theme]
+theme = "default"
+```
+
+Notes:
+
+- `primary_timezone` controls the large primary clock.
+- `timezones` controls the smaller comparison clocks.
+
+CLI:
+
+- `--primary` overrides `primary_timezone` from config when provided.
+- `--timezone` overrides `timezones` from config when provided.
+
+Example:
+
+```
+clocktui --primary America/New_York --timezone Asia/Tokyo --timezone Europe/Lisbon
+```
+
 ## Themes
 
 Theme files are loaded from:
